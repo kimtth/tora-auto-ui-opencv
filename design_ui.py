@@ -9,15 +9,12 @@
 ################################################################################
 import sys
 import os
-from PIL import Image, ImageDraw, ImageTk, ImageQt
-from PySide2.QtCore import (QCoreApplication, QDate, QDateTime, QMetaObject,
-    QObject, QPoint, QRect, QSize, QTime, QUrl, Qt)
-from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
-    QFontDatabase, QIcon, QKeySequence, QLinearGradient, QPalette, QPainter,
-    QPixmap, QRadialGradient)
+from PySide2.QtCore import (QCoreApplication, QMetaObject,
+                            QRect, QSize)
+from PySide2.QtGui import (QIcon, QPixmap)
 from PySide2.QtWidgets import *
 
-import tkinter_window
+from reference import tkinter_window
 
 
 class Ui_MainWindow(object):
