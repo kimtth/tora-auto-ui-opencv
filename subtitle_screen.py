@@ -20,7 +20,7 @@ if __name__ == '__main__':
     b_frame = Frame(window)
     b_frame.place(x=50, y=50)
 
-    button = Button(b_frame, text="Capture", command=lambda: exec())
+    button = Button(b_frame, text="Capture", command=lambda: shot_execute(window))
     button.pack()
 
     window.mainloop()

@@ -32,44 +32,10 @@ class Grabber(tk.Tk):
 
     RECTANGLE_COLOR = '#000000'
 
-    @classmethod
-    def select_area(cls):
-        logger.info("Selecting an area.")
-
-        # run TK app to select an area
-        scope = {'coords': None}
-
-        def set_coords(_coords):
-            scope['coords'] = _coords
-            grabber.exit()  # close the window
-
-        grabber = cls(on_selected=set_coords) #, root_win=root)
-        print('grabber')
-        try:
-            grabber.mainloop()
-        except KeyboardInterrupt:
-            grabber.exit()
-
-        coords = scope['coords']
-        print("aaa" + str(coords))
-        if not coords:
-            pass
-
-        # normalize coords
-        coords = tuple(map(int, coords))
-        left, right = sorted(coords[0::2])
-        top, bottom = sorted(coords[1::2])
-
-        print("abb" + str(coords))
-        logger.debug("Selected area %s.", coords)
-        return Coords(top, left, right, bottom)
-
-    def __init__(self, on_selected, root_win):
+    def __init__(self, root_win):
         tk.Tk.__init__(self)
 
         self.title(__title__)
-
-        self._on_selected = on_selected
 
         self._coords = None
         self._rect_id = None
@@ -119,16 +85,32 @@ class Grabber(tk.Tk):
         self._is_drawing = False
         self._canvas.delete(self._rect_id)
         print(self._coords)
-        self._on_selected(self._coords)
+        self.exit()
 
     def exit(self, event=None):
         self.attributes('-alpha', 0)
         self.destroy()
+        print('call exit -- save img')
+        coords = self.select_area()
+        self.save_cap_img(coords)
         self._root_win.deiconify()
-        print('call exit')
 
-    def __del__(self):
-        print('del class')
+    def select_area(self):
+        logger.info("Selecting an area.")
+
+        # normalize coords
+        coords = self._coords
+        coords = tuple(map(int, coords))
+        left, right = sorted(coords[0::2])
+        top, bottom = sorted(coords[1::2])
+
+        logger.debug("Selected area %s.", coords)
+
+        return Coords(top, left, right, bottom)
+
+    def save_cap_img(self, coords):
+        image = capture_image(coords)
+        save_image(image)
 
 
 def capture_image(coords):
@@ -212,15 +194,5 @@ def save_image(image):
 
 def shot_execute(window):
     window.withdraw()
-
-    #coords = Grabber.select_area(window)
-    #image = capture_image(coords)
-    #save_image(image)
-
-
-if __name__ == '__main__':
-    coords = Grabber.select_area()
-    image = capture_image(coords)
-
-    save_image(image)
+    grab = Grabber(window)
 
