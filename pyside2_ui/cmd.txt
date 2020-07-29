@@ -1,0 +1,2 @@
+How to> uic.exe -g python your_design.ui -o your_design_ui.py
+cmd> uic.exe -g python C:\Users\IEUser\Desktop\pySide\design.ui -o C:\Users\IEUser\Desktop\pySide\design_ui.py
