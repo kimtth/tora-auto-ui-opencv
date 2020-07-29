@@ -1,3 +1,3 @@
-# Screentshot_reader
+# TORA
 
-![preview](https://github.com/kimtth/screentshot_reader/blob/master/tmp/screenshot.gif?raw=true)
+![preview](https://github.com/kimtth/tora/blob/master/tora_main.PNG?raw=true)
