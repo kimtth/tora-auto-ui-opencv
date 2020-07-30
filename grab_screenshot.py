@@ -94,7 +94,6 @@ class Grabber(tk.Tk):
         coords = self.select_area()
         self.save_cap_img(coords)
         # self._root_win.deiconify() # tkinter
-        self._root_win.show()
 
     def select_area(self):
         logger.info("Selecting an area.")
@@ -182,7 +181,7 @@ def to_png(data, size):
 def save_image(image):
     logger.info('Uploading an image to CloudApp.')
     now = datetime.now()
-    dir_name = 'tmp\\'
+    dir_name = 'resource\\'
     filename = 'capture-%s.%s' % (now.strftime('%Y-%m-%d-%H%M%S'), image.format)
     file_path = dir_name + filename
 
@@ -194,7 +193,8 @@ def save_image(image):
 
 
 def shot_execute(window):
-    # window.withdraw() # tkinter
-    window.hide()
+    window.withdraw() # tkinter
+    window.destroy()
+    # window.hide()
     grab = Grabber(window)
 

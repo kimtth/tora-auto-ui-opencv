@@ -12,11 +12,12 @@ def _from_rgb(rgb):
 
 def exec():
     window = Tk()
-    window.geometry("150x100+300+300")
+    window.geometry("50x25+300+300")
+    window.resizable(0, 0)
     window.configure(bg=_from_rgb((0,0,102)))
 
     b_frame = Frame(window)
-    b_frame.place(x=50, y=50)
+    b_frame.place(x=0, y=0)
 
     button = Button(b_frame, text="Capture", command=lambda: shot_execute(window))
     button.pack()

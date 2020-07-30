@@ -12,6 +12,7 @@ import os
 
 from PIL import Image, ImageQt
 
+from reference import tkinter_window
 from ui_syntax_highlight import SyntaxHighlighter
 from PySide2.QtCore import (QCoreApplication, QMetaObject,
                             QRect, QSize)
@@ -121,7 +122,7 @@ class Ui_MainWindow(object):
 
 
 class UI_Action(object):
-    def __init__(self, qt_windows):
+    def __init__(self, MainWindow, qt_windows):
         self.qt = qt_windows
 
         self.action_menu_exit()
@@ -140,7 +141,7 @@ class UI_Action(object):
         self.qt.loadButton.clicked.connect(lambda: self.button_load_selectDirectory())
 
     def action_button_capture(self):
-        self.qt.captureButton.clicked.connect(lambda: shot_execute())
+        self.qt.captureButton.clicked.connect(lambda: tkinter_window.exec())
 
     def action_button_run_script(self):
         self.qt.runScriptButton.clicked.connect(lambda: self.button_run_script())
@@ -183,7 +184,7 @@ if __name__ == "__main__":
     MainWindow = QMainWindow()  # <-- Instantiate QMainWindow object.
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
-    action = UI_Action(ui)
+    action = UI_Action(MainWindow, ui)
 
     MainWindow.show()
     app.exec_()
