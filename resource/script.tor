@@ -1,0 +1,5 @@
+Click (qt_icon)
+Wait (1)
+Wait (2)
+Type (hello)
+Press (enter)

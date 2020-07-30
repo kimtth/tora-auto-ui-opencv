@@ -9,12 +9,16 @@
 ################################################################################
 import sys
 import os
+
+from PIL import Image, ImageQt
+
+from ui_syntax_highlight import SyntaxHighlighter
 from PySide2.QtCore import (QCoreApplication, QMetaObject,
                             QRect, QSize)
 from PySide2.QtGui import (QIcon, QPixmap)
 from PySide2.QtWidgets import *
 
-from reference import tkinter_window
+from grab_screenshot import shot_execute
 
 
 class Ui_MainWindow(object):
@@ -107,6 +111,12 @@ class Ui_MainWindow(object):
         self.imagelabel.setText(QCoreApplication.translate("MainWindow", u"Image (png)", None))
         self.menuExit.setTitle(QCoreApplication.translate("MainWindow", u"Exit", None))
         self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
+
+        # Syntax highlight
+        SyntaxHighlighter(self.textEdit.document())
+        # Load for Sample code
+        infile = open('./resource/script.tor', 'r')
+        self.textEdit.setPlainText(infile.read())
     # retranslateUi
 
 
@@ -130,7 +140,7 @@ class UI_Action(object):
         self.qt.loadButton.clicked.connect(lambda: self.button_load_selectDirectory())
 
     def action_button_capture(self):
-        self.qt.captureButton.clicked.connect(lambda: tkinter_window.exec())
+        self.qt.captureButton.clicked.connect(lambda: shot_execute())
 
     def action_button_run_script(self):
         self.qt.runScriptButton.clicked.connect(lambda: self.button_run_script())

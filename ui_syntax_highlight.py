@@ -27,10 +27,10 @@ def format(color, style=''):
 
 # Syntax styles that can be shared by all languages
 STYLES = {
-    'keyword': format('blue'),
+    'keyword': format('blue', 'bold'),
     'operator': format('red'),
     'brace': format('darkGray'),
-    'defclass': format('black', 'bold'),
+    'defclass': format('black'),
     'string': format('magenta'),
     'string2': format('darkMagenta'),
     'comment': format('darkGreen', 'italic'),
@@ -39,17 +39,12 @@ STYLES = {
 }
 
 
-class PythonHighlighter (QSyntaxHighlighter):
+class SyntaxHighlighter (QSyntaxHighlighter):
     """Syntax highlighter for the Python language.
     """
     # Python keywords
     keywords = [
-        'and', 'assert', 'break', 'class', 'continue', 'def',
-        'del', 'elif', 'else', 'except', 'exec', 'finally',
-        'for', 'from', 'global', 'if', 'import', 'in',
-        'is', 'lambda', 'not', 'or', 'pass', 'print',
-        'raise', 'return', 'try', 'while', 'yield',
-        'None', 'True', 'False',
+        'Click', 'Wait', 'Type', 'Press'
     ]
 
     # Python operators
@@ -73,36 +68,41 @@ class PythonHighlighter (QSyntaxHighlighter):
     def __init__(self, document):
         QSyntaxHighlighter.__init__(self, document)
 
-        # Multi-line strings (expression, flag, style)
-        # FIXME: The triple-quotes in these two lines will mess up the
-        # syntax highlighting from this point onward
-        self.tri_single = (QRegExp("'''"), 1, STYLES['string2'])
-        self.tri_double = (QRegExp('"""'), 2, STYLES['string2'])
-
         rules = []
 
         # Keyword, operator, and brace rules
         rules += [(r'\b%s\b' % w, 0, STYLES['keyword'])
-            for w in PythonHighlighter.keywords]
+            for w in SyntaxHighlighter.keywords]
         rules += [(r'%s' % o, 0, STYLES['operator'])
-            for o in PythonHighlighter.operators]
+            for o in SyntaxHighlighter.operators]
         rules += [(r'%s' % b, 0, STYLES['brace'])
-            for b in PythonHighlighter.braces]
+            for b in SyntaxHighlighter.braces]
 
         # All other rules
         rules += [
             # 'self'
             (r'\bself\b', 0, STYLES['self']),
 
+            # Click
+            # Click\s *\((.* ?)\)
+            (r'Click\s *\((.* ?)\)', 1, STYLES['defclass']),
+
+            # Wait
+            # Wait\s*\(\d\)
+            (r'Wait\s*\(\d\)', 1, STYLES['defclass']),
+
+            # Type
+            # Type\s *\((.* ?)\)
+            (r'Type\s *\((.* ?)\)', 1, STYLES['defclass']),
+
+            # Press
+            # Press\s *\((.* ?)\)
+            (r'Press\s *\((.* ?)\)', 1, STYLES['defclass']),
+
             # Double-quoted string, possibly containing escape sequences
             (r'"[^"\\]*(\\.[^"\\]*)*"', 0, STYLES['string']),
             # Single-quoted string, possibly containing escape sequences
             (r"'[^'\\]*(\\.[^'\\]*)*'", 0, STYLES['string']),
-
-            # 'def' followed by an identifier
-            (r'\bdef\b\s*(\w+)', 1, STYLES['defclass']),
-            # 'class' followed by an identifier
-            (r'\bclass\b\s*(\w+)', 1, STYLES['defclass']),
 
             # From '#' until a newline
             (r'#[^\n]*', 0, STYLES['comment']),
@@ -128,7 +128,11 @@ class PythonHighlighter (QSyntaxHighlighter):
             while index >= 0:
                 # We actually want the index of the nth match
                 index = expression.pos(nth)
-                length = expression.cap(nth).length()
+                expr = expression.cap(nth)
+                if type(expr) is str:
+                    length = len(expression.cap(nth))
+                else:
+                    length = expression.cap(nth).length()
                 self.setFormat(index, length, format)
                 index = expression.indexIn(text, index + length)
 

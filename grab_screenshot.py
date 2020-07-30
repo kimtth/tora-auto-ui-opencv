@@ -93,7 +93,8 @@ class Grabber(tk.Tk):
         print('call exit -- save img')
         coords = self.select_area()
         self.save_cap_img(coords)
-        self._root_win.deiconify()
+        # self._root_win.deiconify() # tkinter
+        self._root_win.show()
 
     def select_area(self):
         logger.info("Selecting an area.")
@@ -193,6 +194,7 @@ def save_image(image):
 
 
 def shot_execute(window):
-    window.withdraw()
+    # window.withdraw() # tkinter
+    window.hide()
     grab = Grabber(window)
 
