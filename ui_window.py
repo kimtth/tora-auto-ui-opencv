@@ -19,8 +19,6 @@ from PySide2.QtCore import (QCoreApplication, QMetaObject,
 from PySide2.QtGui import (QIcon, QPixmap)
 from PySide2.QtWidgets import *
 
-from grab_screenshot import shot_execute
-
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):

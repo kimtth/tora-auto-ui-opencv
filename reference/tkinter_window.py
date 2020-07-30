@@ -1,7 +1,6 @@
-from PIL import Image, ImageDraw, ImageTk
-from tkinter import Tk, Button, Frame, mainloop, YES, BOTH, NW
+from tkinter import Tk, Button, Frame
 
-from grab_screenshot import shot_execute
+from screenshot.grab_screenshot import shot_execute
 
 
 def _from_rgb(rgb):
