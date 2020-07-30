@@ -168,11 +168,11 @@ class UI_Action(object):
         '''
         for img_file_name in os.listdir(dir_path):
             img_file_path = dir_path + '/' + img_file_name
-            if os.path.exists(img_file_path) and img_file_name.endswith(".png"):
+            if os.path.exists(img_file_path) and img_file_name.lower().endswith(".png"):
                 picture = Image.open(img_file_path)
                 picture.thumbnail((72, 72), Image.ANTIALIAS)
                 icon = QIcon(QPixmap.fromImage(ImageQt.ImageQt(picture)))
-                item = QListWidgetItem(os.path.basename(img_file_path)[:20] + "...", self.qt.imglistWidget)
+                item = QListWidgetItem(os.path.basename(img_file_path)[:20], self.qt.imglistWidget)
                 item.setStatusTip(img_file_path)
                 item.setIcon(icon)
 
