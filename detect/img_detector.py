@@ -76,7 +76,7 @@ def img_coord_detector(target_img_path, screen_img):
         print(top_left, bottom_right)
         print(round(center_w, 1), round(center_h, 1))
 
-        center = (round(center_w, 1), round(center_h, 1))
+        center = (round(center_h, 1), round(center_w, 1))
 
         return center
     except Exception as e:
