@@ -179,7 +179,10 @@ class UI_Action(object):
         self.qt.actionAbout.triggered.connect(lambda: self.menu_help())
 
     def action_button_capture(self):
-        self.qt.captureButton.clicked.connect(lambda: tkinter_window.exec())
+        if not self.workspace_empty_check():
+            workspace_path = self.qt.lineEdit.text()
+            qt_endpoint = self
+            self.qt.captureButton.clicked.connect(lambda: tkinter_window.exec(workspace_path, qt_endpoint))
 
     def action_button_run_script(self):
         self.qt.runScriptButton.clicked.connect(lambda: self.button_run_script())
@@ -193,12 +196,6 @@ class UI_Action(object):
         print('workspace_directory:', selected_directory)
         if selected_directory:
             self.qt.lineEdit.setText(selected_directory)
-            self.list_image_load_on(selected_directory)
-
-    def button_load_selectDirectory(self):
-        selected_directory = QFileDialog.getExistingDirectory()
-        print('selected_directory:', selected_directory)
-        if selected_directory:
             self.list_image_load_on(selected_directory)
 
     def button_run_script(self):

@@ -32,7 +32,7 @@ class Grabber(tk.Tk):
 
     RECTANGLE_COLOR = '#000000'
 
-    def __init__(self, root_win):
+    def __init__(self, root_win, qt, workspace_path):
         tk.Tk.__init__(self)
 
         self.title(__title__)
@@ -43,6 +43,8 @@ class Grabber(tk.Tk):
 
         self._canvas = None
         self._root_win = root_win
+        self.qt = qt
+        self.workspace_path = workspace_path
 
         self.initialize_geometry()
         self.initialize_controls()
@@ -109,92 +111,89 @@ class Grabber(tk.Tk):
         return Coords(top, left, right, bottom)
 
     def save_cap_img(self, coords):
-        image = capture_image(coords)
-        save_image(image)
+        image = self.capture_image(coords)
+        self.save_image(image)
+        self.qt.list_image_load_on(self.workspace_path)
+
+    def capture_image(self, coords):
+        """Take a screenshot."""
+        logger.info("Capturing a screen.")
+        screen = mss()
+        mss_image = screen.grab({
+            'top': coords.top,
+            'left': coords.left,
+            'width': coords.right - coords.left + 1,
+            'height': coords.bottom - coords.top + 1,
+        })
+
+        stream = self.to_png(mss_image.rgb, mss_image.size)
+
+        return Image_Container(stream, 'png')
 
 
-def capture_image(coords):
-    """Take a screenshot."""
-    logger.info("Capturing a screen.")
-    screen = mss()
-    mss_image = screen.grab({
-        'top': coords.top,
-        'left': coords.left,
-        'width': coords.right - coords.left + 1,
-        'height': coords.bottom - coords.top + 1,
-    })
+    def to_png(self, data, size):
+        """
+        Dump data to a PNG file.
 
-    stream = to_png(mss_image.rgb, mss_image.size)
+        This code is a part of the MSS library.
+        Source: https://github.com/BoboTiG/python-mss/blob/d740fa774cae4b8ccaddf980cbf417ebe33117e7/mss/tools.py#L10
+        MSS License: MIT
+        2017-07-18
 
-    return Image_Container(stream, 'png')
+        :param bytes data: RGBRGB...RGB data.
+        :param tuple size: The (width, height) pair.
+        """
 
+        width, height = size
+        line = width * 3
+        png_filter = struct.pack('>B', 0)
+        scanlines = b''.join(
+            [png_filter + data[y * line:y * line + line]
+             for y in range(height)])
 
-def to_png(data, size):
-    """
-    Dump data to a PNG file.
+        magic = struct.pack('>8B', 137, 80, 78, 71, 13, 10, 26, 10)
 
-    This code is a part of the MSS library.
-    Source: https://github.com/BoboTiG/python-mss/blob/d740fa774cae4b8ccaddf980cbf417ebe33117e7/mss/tools.py#L10
-    MSS License: MIT
-    2017-07-18
+        # Header: size, marker, data, CRC32
+        ihdr = [b'', b'IHDR', b'', b'']
+        ihdr[2] = struct.pack('>2I5B', width, height, 8, 2, 0, 0, 0)
+        ihdr[3] = struct.pack('>I', zlib.crc32(b''.join(ihdr[1:3])) & 0xffffffff)
+        ihdr[0] = struct.pack('>I', len(ihdr[2]))
 
-    :param bytes data: RGBRGB...RGB data.
-    :param tuple size: The (width, height) pair.
-    """
+        # Data: size, marker, data, CRC32
+        idat = [b'', b'IDAT', zlib.compress(scanlines), b'']
+        idat[3] = struct.pack('>I', zlib.crc32(b''.join(idat[1:3])) & 0xffffffff)
+        idat[0] = struct.pack('>I', len(idat[2]))
 
-    width, height = size
-    line = width * 3
-    png_filter = struct.pack('>B', 0)
-    scanlines = b''.join(
-        [png_filter + data[y * line:y * line + line]
-         for y in range(height)])
+        # Footer: size, marker, None, CRC32
+        iend = [b'', b'IEND', b'', b'']
+        iend[3] = struct.pack('>I', zlib.crc32(iend[1]) & 0xffffffff)
+        iend[0] = struct.pack('>I', len(iend[2]))
 
-    magic = struct.pack('>8B', 137, 80, 78, 71, 13, 10, 26, 10)
+        # store data in memory
+        fileh = io.BytesIO()
+        fileh.write(magic)
+        fileh.write(b''.join(ihdr))
+        fileh.write(b''.join(idat))
+        fileh.write(b''.join(iend))
+        fileh.seek(0)
 
-    # Header: size, marker, data, CRC32
-    ihdr = [b'', b'IHDR', b'', b'']
-    ihdr[2] = struct.pack('>2I5B', width, height, 8, 2, 0, 0, 0)
-    ihdr[3] = struct.pack('>I', zlib.crc32(b''.join(ihdr[1:3])) & 0xffffffff)
-    ihdr[0] = struct.pack('>I', len(ihdr[2]))
-
-    # Data: size, marker, data, CRC32
-    idat = [b'', b'IDAT', zlib.compress(scanlines), b'']
-    idat[3] = struct.pack('>I', zlib.crc32(b''.join(idat[1:3])) & 0xffffffff)
-    idat[0] = struct.pack('>I', len(idat[2]))
-
-    # Footer: size, marker, None, CRC32
-    iend = [b'', b'IEND', b'', b'']
-    iend[3] = struct.pack('>I', zlib.crc32(iend[1]) & 0xffffffff)
-    iend[0] = struct.pack('>I', len(iend[2]))
-
-    # store data in memory
-    fileh = io.BytesIO()
-    fileh.write(magic)
-    fileh.write(b''.join(ihdr))
-    fileh.write(b''.join(idat))
-    fileh.write(b''.join(iend))
-    fileh.seek(0)
-
-    return fileh
+        return fileh
 
 
-def save_image(image):
-    logger.info('Uploading an image to CloudApp.')
-    now = datetime.now()
-    dir_name = '../resource\\'
-    filename = 'capture-%s.%s' % (now.strftime('%Y-%m-%d-%H%M%S'), image.format)
-    file_path = dir_name + filename
+    def save_image(self, image):
+        now = datetime.now()
+        filename = 'shot-%s.%s' % (now.strftime('%Y%m%d%H%M%S'), image.format)
+        file_path = self.workspace_path + '/' + filename
 
-    byteImg = Image.open(image.stream)
-    byteImg.show()
-
-    ans_file_path = os.path.abspath(file_path)
-    byteImg.save(ans_file_path, 'PNG')
+        byteImg = Image.open(image.stream)
+        # byteImg.show()
+        abs_file_path = os.path.abspath(file_path)
+        byteImg.save(abs_file_path, 'png')
 
 
-def shot_execute(window):
+def shot_execute(window, qt, workspace_path):
     window.withdraw() # tkinter
     window.destroy()
     # window.hide()
-    grab = Grabber(window)
+    grab = Grabber(window, qt, workspace_path)
 
