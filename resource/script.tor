@@ -4,5 +4,5 @@ Wait (2)
 Type (hello)
 Press (enter)
 # Comment
-Wait()
+Press (ctrl_c)
 # Comment bye

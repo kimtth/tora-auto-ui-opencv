@@ -1,12 +1,12 @@
 from __future__ import unicode_literals, print_function
 from pypeg2 import *
+from pypeg2.xmlast import thing2xml
 
 # A Symbol can be an arbitrary word or one word of an Enum.
 # In this easy example there is an Enum.
-from pypeg2.xmlast import thing2xml
 
 
-class Type(Keyword):
+class Command(Keyword):
     grammar = Enum(K("Click"), K("Wait"), K("Type"), K("Press"))
 
 
@@ -21,7 +21,7 @@ class Parameter(object):
 
 # If a thing is a List, then parsed things are being put into.
 class Function(List):
-    grammar = attr("typing", Type), "(", maybe_some(attr("param", Parameter)), ")", endl
+    grammar = attr("command", Command), "(", maybe_some(attr("param", Parameter)), ")", endl
 
 
 class FunctionOrComment(List):
@@ -29,20 +29,19 @@ class FunctionOrComment(List):
     grammar = maybe_some(Function), maybe_some(comment)
 
 
-'''
-if __name__ == '__main__':
-    filename = '../resource/script.tor'
-    # Read the data
-    with open(filename, 'r') as source_file:
-        data = source_file.read()
+def call_parser(line):
+    results = parse(line, FunctionOrComment)
+    return results
 
-        # Attempt to parse it, or throw errors
-        for line in data.splitlines():
-            try:
-                results = parse(line, FunctionOrComment)
-                print(thing2xml(results, pretty=True).decode())
-            except GrammarTypeError as e:
-                print("GrammarTypeError: " + str(e))
-            except GrammarValueError as e2:
-                print("GrammarValueError" + str(e2))
-'''
+
+def parse_result(line):
+    try:
+        results = call_parser(line)
+        print(thing2xml(results, pretty=True).decode())
+    except GrammarTypeError as e:
+        print("GrammarTypeError: " + str(e))
+    except GrammarValueError as e2:
+        print("GrammarValueError" + str(e2))
+
+    return results
+
