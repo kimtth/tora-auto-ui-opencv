@@ -1,8 +1,8 @@
-Click (qt_icon)
+Click (chrome_icon)
+Press (enter)
 Wait (1)
 Wait (2)
 Type (hello)
-Press (enter)
 # Comment
-Press (ctrl_c)
+Press (winleft_r)
 # Comment bye

@@ -7,18 +7,12 @@
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
-import sys
-import os
 
-from PIL import Image, ImageQt
-from PySide2 import QtWidgets, QtCore
-
-from reference import tkinter_window
-from script import tor_runner
-from ui_syntax_highlight import SyntaxHighlighter
-from PySide2.QtCore import (QCoreApplication, QMetaObject,
-                            QRect, QSize)
-from PySide2.QtGui import (QIcon, QPixmap)
+from PySide2.QtCore import (QCoreApplication, QDate, QDateTime, QMetaObject,
+    QObject, QPoint, QRect, QSize, QTime, QUrl, Qt)
+from PySide2.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
+    QFontDatabase, QIcon, QKeySequence, QLinearGradient, QPalette, QPainter,
+    QPixmap, QRadialGradient)
 from PySide2.QtWidgets import *
 
 
@@ -125,125 +119,5 @@ class Ui_MainWindow(object):
         self.WorkSpaceButton.setText(QCoreApplication.translate("MainWindow", u"Set Path", None))
         self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuHelp.setTitle(QCoreApplication.translate("MainWindow", u"Help", None))
-
-        # Syntax highlight
-        SyntaxHighlighter(self.textEdit.document())
-        # Load for Sample code
-        infile = open('./resource/script.tor', 'r')
-        self.textEdit.setPlainText(infile.read())
     # retranslateUi
 
-
-class MouseTracker(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.initUI()
-        self.setMouseTracking(True)
-
-    def initUI(self):
-        self.setGeometry(300, 300, 300, 200)
-        self.setWindowTitle('Mouse Tracker')
-        self.label = QLabel(self)
-        self.label.resize(200, 40)
-
-    def mouseMoveEvent(self, event):
-        self.label.setText('Mouse coords: ( %d : %d )' % (event.x(), event.y()))
-
-
-class UI_Action(object):
-    def __init__(self, MainWindow, qt_windows):
-        self.qt = qt_windows
-        self.action_menu_save()
-        self.action_menu_exit()
-        self.action_menu_help()
-        self.action_button_capture()
-        self.action_button_run_script()
-        self.action_set_workspace()
-
-    def action_menu_save(self):
-        self.qt.actionSave.triggered.connect(lambda: self.menu_save())
-
-    def action_set_workspace(self):
-        self.qt.WorkSpaceButton.clicked.connect(lambda: self.button_workspace_selectDirectory())
-
-    def action_menu_exit(self):
-        self.qt.actionExit.triggered.connect(lambda: self.menu_exit())
-
-    def action_menu_help(self):
-        self.qt.actionAbout.triggered.connect(lambda: self.menu_help())
-
-    def action_button_capture(self):
-        self.qt.captureButton.clicked.connect(lambda: tkinter_window.exec())
-
-    def action_button_run_script(self):
-        self.qt.runScriptButton.clicked.connect(lambda: self.button_run_script())
-
-    def button_mouse_coord(self):
-        m = MouseTracker()
-        m.show()
-
-    def button_workspace_selectDirectory(self):
-        selected_directory = QFileDialog.getExistingDirectory()
-        print('workspace_directory:', selected_directory)
-        if selected_directory:
-            self.qt.lineEdit.setText(selected_directory)
-            self.list_image_load_on(selected_directory)
-
-    def button_load_selectDirectory(self):
-        selected_directory = QFileDialog.getExistingDirectory()
-        print('selected_directory:', selected_directory)
-        if selected_directory:
-            self.list_image_load_on(selected_directory)
-
-    def button_run_script(self):
-        if not self.workspace_empty_check():
-            QMessageBox.information(None, "Information", "Start!")
-            tor_runner.run()
-
-    def menu_exit(self):
-        QCoreApplication.quit()
-
-    def menu_save(self):
-        if not self.workspace_empty_check():
-            text_plain = self.qt.textEdit.toPlainText()
-            print(text_plain)
-            file_path = self.qt.lineEdit.text() + '/' + 'script.tor'
-            with open(file_path, 'w') as f:
-                f.write(text_plain)
-
-    def workspace_empty_check(self):
-        wp_path = self.qt.lineEdit.text()
-        if not wp_path:
-            QMessageBox.warning(None, "Warning", "Please set workspace!")
-            return True
-
-    def menu_help(self):
-        QMessageBox.information(None, "Information", "Created by python.")
-
-    #def button_func_mapper(self, button, func, *args):
-    #    button.clicked.connect(lambda: func(args))
-
-    def list_image_load_on(self, dir_path):
-        '''
-        https://medium.com/xster-tech/pyqt-drag-images-into-list-widget-for-thumbnail-list-e4a12f906bd8
-        '''
-        for img_file_name in os.listdir(dir_path):
-            img_file_path = dir_path + '/' + img_file_name
-            if os.path.exists(img_file_path) and img_file_name.lower().endswith(".png"):
-                picture = Image.open(img_file_path)
-                picture.thumbnail((72, 72), Image.ANTIALIAS)
-                icon = QIcon(QPixmap.fromImage(ImageQt.ImageQt(picture)))
-                item = QListWidgetItem(os.path.basename(img_file_path)[:20], self.qt.imglistWidget)
-                item.setStatusTip(img_file_path)
-                item.setIcon(icon)
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    MainWindow = QMainWindow()  # <-- Instantiate QMainWindow object.
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    action = UI_Action(MainWindow, ui)
-
-    MainWindow.show()
-    app.exec_()

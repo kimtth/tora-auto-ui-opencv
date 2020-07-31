@@ -1,2 +1,3 @@
 How to> uic.exe -g python your_design.ui -o your_design_ui.py
-cmd> uic.exe -g python C:\Users\IEUser\Desktop\pySide\design.ui -o C:\Users\IEUser\Desktop\pySide\design_ui.py
+cmd> cd C:\Users\IEUser\code\tora\venv\Lib\site-packages\PySide2
+cmd> uic.exe -g python C:\Users\IEUser\code\tora\ui_file\design.ui -o C:\Users\IEUser\code\tora\ui_file\design_ui.py

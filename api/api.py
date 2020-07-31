@@ -16,7 +16,7 @@ class AutoGuiWrapper:
         self.auto.click(clicks=2)
 
     def click(self, coord):
-        self.auto.click(x=coord['x'], y=coord['y'])
+        self.auto.click(x=coord[0], y=coord[1], clicks=2)
 
     def wait(self, sec):
         time.sleep(sec)

@@ -3,11 +3,17 @@
 Converting the result of parsing to pyAutoGUI method.
 '''
 from api.api import AutoGuiWrapper
-from parser_script.tor_parser import parse_result, Function
+from script.tor_parser import parse_result, Function
+
+from detect import img_detector
 
 
 def param_to_str(param):
     return str(param)
+
+
+def param_to_int(param):
+    return int(param)
 
 
 class RunScript:
@@ -24,9 +30,16 @@ class RunScript:
 
                 if str(command).lower() == 'click':
                     # @TODO
-                    self.auto.click(param)
+                    root_path = 'C:/Users/IEUser/code/tora/resource/'
+                    filename = param
+                    file_extension = '.png'
+
+                    target_img_path = root_path + filename + file_extension
+                    coord = img_detector.img_coord_detector_by_target(target_img_path)
+
+                    self.auto.click(coord)
                 elif str(command).lower() == 'wait':
-                    self.auto.wait(param)
+                    self.auto.wait(param_to_int(param))
                 elif str(command).lower() == 'type':
                     self.auto.type(param_to_str(param))
                 elif str(command).lower() == 'press':
@@ -45,7 +58,11 @@ class RunScript:
                 self.traverse(f)
 
 
-if __name__ == '__main__':
-    filename = '../resource/script.tor'
+def run():
+    filename = 'C:/Users/IEUser/code/tora/resource/script.tor'
     run = RunScript()
     run.exec_script(filename)
+
+
+if __name__ == '__main__':
+    run()
