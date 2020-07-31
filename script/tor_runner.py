@@ -12,8 +12,8 @@ def param_to_str(param):
     return str(param)
 
 
-def param_to_int(param):
-    return int(param)
+def param_to_float(param):
+    return float(param)
 
 
 class RunScript:
@@ -39,7 +39,7 @@ class RunScript:
 
                     self.auto.click(coord)
                 elif str(command).lower() == 'wait':
-                    self.auto.wait(param_to_int(param))
+                    self.auto.wait(param_to_float(param))
                 elif str(command).lower() == 'type':
                     self.auto.type(param_to_str(param))
                 elif str(command).lower() == 'press':

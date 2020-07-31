@@ -128,9 +128,6 @@ class Ui_MainWindow(object):
 
         # Syntax highlight
         SyntaxHighlighter(self.textEdit.document())
-        # Load for Sample code
-        infile = open('./resource/script.tor', 'r')
-        self.textEdit.setPlainText(infile.read())
     # retranslateUi
 
 
@@ -153,12 +150,21 @@ class MouseTracker(QWidget):
 class UI_Action(object):
     def __init__(self, MainWindow, qt_windows):
         self.qt = qt_windows
+        self.test_data()
         self.action_menu_save()
         self.action_menu_exit()
         self.action_menu_help()
         self.action_button_capture()
         self.action_button_run_script()
         self.action_set_workspace()
+
+    def test_data(self):
+        # Load for Sample code
+        infile = open('./resource/script.tor', 'r')
+        self.qt.textEdit.setPlainText(infile.read())
+        abs_path = os.path.abspath('./resource/')
+        self.qt.lineEdit.setText(abs_path)
+        self.list_image_load_on(abs_path)
 
     def action_menu_save(self):
         self.qt.actionSave.triggered.connect(lambda: self.menu_save())
@@ -197,7 +203,8 @@ class UI_Action(object):
 
     def button_run_script(self):
         if not self.workspace_empty_check():
-            QMessageBox.information(None, "Information", "Start!")
+            # QMessageBox.information(None, "Information", "Start!")
+            self.menu_save()
             tor_runner.run()
 
     def menu_exit(self):
@@ -227,6 +234,8 @@ class UI_Action(object):
         '''
         https://medium.com/xster-tech/pyqt-drag-images-into-list-widget-for-thumbnail-list-e4a12f906bd8
         '''
+        self.qt.imglistWidget.clear()
+
         for img_file_name in os.listdir(dir_path):
             img_file_path = dir_path + '/' + img_file_name
             if os.path.exists(img_file_path) and img_file_name.lower().endswith(".png"):

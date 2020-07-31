@@ -5,4 +5,8 @@ The aim of this code fully implements by python.
 
 Tora means Tiger in Japanese. its pronunciation seams like "Dora", Korean, it means working well.
 
-![preview](https://github.com/kimtth/tora/blob/master/main_screen.PNG?raw=true)
+![ui_screen](https://github.com/kimtth/tora/blob/master/main_screen.PNG?raw=true)
+
+**Preview**
+
+![preview](https://github.com/kimtth/tora/blob/master/preview.gif?raw=true)
