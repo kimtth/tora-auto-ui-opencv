@@ -204,8 +204,9 @@ class UI_Action(object):
     def button_run_script(self):
         if not self.workspace_empty_check():
             # QMessageBox.information(None, "Information", "Start!")
+            workspace_path = self.qt.lineEdit.text()
             self.menu_save()
-            tor_runner.run()
+            tor_runner.run(workspace_path)
 
     def menu_exit(self):
         QCoreApplication.quit()

@@ -3,9 +3,8 @@
 Converting the result of parsing to pyAutoGUI method.
 '''
 from api.api import AutoGuiWrapper
+from detect.img_detector import ImgDetector
 from script.tor_parser import parse_result, Function
-
-from detect import img_detector
 
 
 def param_to_str(param):
@@ -18,8 +17,9 @@ def param_to_float(param):
 
 class RunScript:
 
-    def __init__(self):
+    def __init__(self, workspace_path):
         self.auto = AutoGuiWrapper()
+        self.workspace_path = workspace_path
 
     def traverse(self, f):
         func_or_comment = f[0]
@@ -29,12 +29,11 @@ class RunScript:
                 param = f[0].param.name
 
                 if str(command).lower() == 'click':
-                    # @TODO
-                    root_path = 'C:/Users/IEUser/code/tora/resource/'
                     filename = param
                     file_extension = '.png'
 
-                    target_img_path = root_path + filename + file_extension
+                    target_img_path = self.workspace_path + '/' + filename + file_extension
+                    img_detector = ImgDetector(self.workspace_path)
                     coord = img_detector.img_coord_detector_by_target(target_img_path)
 
                     self.auto.click(coord)
@@ -58,11 +57,7 @@ class RunScript:
                 self.traverse(f)
 
 
-def run():
-    filename = 'C:/Users/IEUser/code/tora/resource/script.tor'
-    run = RunScript()
-    run.exec_script(filename)
-
-
-if __name__ == '__main__':
-    run()
+def run(workspace_path):
+    file_path = workspace_path + '/' + 'script.tor'
+    run = RunScript(workspace_path)
+    run.exec_script(file_path)
