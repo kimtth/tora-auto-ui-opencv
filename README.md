@@ -1,5 +1,5 @@
 # TORA (Tigre / Tiger)
-Most of the UI Automation framework still has detected the object by DOM object or WinAPI. This small project is for looking into technical feasibility pf object detection by image. If you have an interest in a similar approach, you might have heard the framework called Sikuli, written by Java. 
+Most of the UI Automation framework still has detected the object by DOM object or WinAPI. This small project is for looking into technical feasibility of object detection by image. If you have an interest in a similar approach, you might have heard the framework called Sikuli, written by Java. 
 
 The aim of this code fully implements by python.
 
