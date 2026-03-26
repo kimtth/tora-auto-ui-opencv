@@ -17,6 +17,6 @@ PyScreeze==0.1.26
 PySide2==5.15.0
 pytest-runner==5.2
 PyTweening==1.0.3
-requests==2.32.4
+requests==2.33.0
 shiboken2==5.15.0
 urllib3==2.6.3
